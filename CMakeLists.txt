@@ -4,6 +4,10 @@ project(buniq LANGUAGES CXX)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+  set(CMAKE_INSTALL_PREFIX "/usr/local" CACHE PATH "Install prefix" FORCE)
+endif()
+
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type" FORCE)
 endif()
@@ -20,3 +24,7 @@ target_compile_features(buniq PRIVATE cxx_std_17)
 
 find_package(Threads REQUIRED)
 target_link_libraries(buniq PRIVATE Threads::Threads)
+
+install(TARGETS buniq
+  RUNTIME DESTINATION bin
+)

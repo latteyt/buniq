@@ -23,6 +23,14 @@ cmake --build build
 
 `compile_commands.json` is generated in `build/` during configuration.
 
+## Install
+
+The default install prefix is `/usr/local`.
+
+```bash
+cmake --install build
+```
+
 ## Usage
 
 ```bash

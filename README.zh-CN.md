@@ -23,6 +23,14 @@ cmake --build build
 
 配置时会生成 `build/compile_commands.json`，便于编辑器和静态分析工具使用。
 
+## 安装
+
+默认安装前缀是 `/usr/local`。
+
+```bash
+cmake --install build
+```
+
 ## 使用
 
 ```bash
