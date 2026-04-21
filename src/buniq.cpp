@@ -2,6 +2,7 @@
 #include <cstddef>
 #include <fcntl.h>
 #include <memory>
+#include <random>
 #include <stdexcept>
 
 #include <cstdio>
@@ -21,9 +22,11 @@ int main(int argc, char *argv[]) {
     return 1;
   size_t scale = 8;
   size_t precision = 6;
+  std::random_device rd;
+  size_t seed = (static_cast<size_t>(rd()) << 32) | rd();
 
   int opt;
-  while ((opt = getopt(argc, argv, "n:s:p:")) != -1) {
+  while ((opt = getopt(argc, argv, "n:s:p:i:")) != -1) {
     switch (opt) {
     case 'n':
       nthreads = std::strtoul(optarg, nullptr, 10);
@@ -34,9 +37,13 @@ int main(int argc, char *argv[]) {
     case 'p':
       precision = std::strtoul(optarg, nullptr, 10);
       break;
+    case 'i':
+      seed = std::strtoul(optarg, nullptr, 10);
+      break;
     }
   }
-  bloom_filter_t bloom_filter{scale, precision, 0x1234};
+
+  bloom_filter_t bloom_filter{scale, precision, seed};
 
   std::vector<spsc_queue_t> queues(nthreads);
   std::vector<std::thread> workers;
