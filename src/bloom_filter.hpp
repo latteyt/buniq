@@ -24,7 +24,7 @@ struct alignas(64) block_t {
   void lock() {
     size_t spin = 1;
     while (spinlock.test_and_set(std::memory_order_acquire)) {
-      for (int i = 0; i < spin; ++i)
+      for (size_t i = 0; i < spin; ++i)
         _mm_pause();
       if (spin < 1024) [[likely]]
         spin *= 2;
@@ -88,6 +88,5 @@ struct bloom_filter_t {
     return is_new;
   }
 };
-
 
 #endif
