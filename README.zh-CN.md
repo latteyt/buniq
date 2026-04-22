@@ -3,7 +3,7 @@
 [![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC%20BY--NC%204.0-blue.svg)](https://creativecommons.org/licenses/by-nc/4.0/)
 
 `buniq` 是一个基于 blocked Bloom Filter 的多线程去重命令行工具，采用按 cache line 分块的方式提升缓存友好性。
-它从标准输入或单个文件中读取文本行，实时输出首次出现的行，并在结束时打印每个 worker 的处理数量。
+它从标准输入或单个文件中读取文本行，并实时输出首次出现的行。
 
 ## 特性
 
@@ -53,7 +53,6 @@ cmake --install build
 - 输入按行处理，单行最大长度为 `1024`
 - 过长输入会抛出 `Line Too Long`
 - 首次出现的行会立刻输出
-- 程序结束时，每个 worker 会输出一行统计信息：`worker %zu: %zu`
 - worker 退出信号是一个 `len == 0` 的 item
 
 ## 代码结构

@@ -3,7 +3,7 @@
 [![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC%20BY--NC%204.0-blue.svg)](https://creativecommons.org/licenses/by-nc/4.0/)
 
 `buniq` is a multithreaded line de-duplication CLI built around a blocked, cache-friendly Bloom filter.
-It reads text lines from stdin or a single file, prints first-seen lines immediately, and reports per-worker counts at exit.
+It reads text lines from stdin or a single file and prints first-seen lines immediately.
 
 ## Features
 
@@ -53,7 +53,6 @@ Notes:
 - Input is processed line by line with a maximum line length of `1024`
 - Longer lines raise `Line Too Long`
 - First-seen lines are printed immediately
-- Each worker prints a final counter line: `worker %zu: %zu`
 - A queue item with `len == 0` is used as the worker shutdown sentinel
 
 ## Project Layout
