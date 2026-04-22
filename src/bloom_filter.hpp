@@ -7,7 +7,7 @@
 #include <cmath>
 #include <cstdint>
 #include <cstring>
-#include <iostream>
+#include <emmintrin.h>
 #include <thread>
 #include <vector>
 
@@ -22,8 +22,15 @@ struct block_t {
     std::memset(data, 0, 63);
   }
   void lock() {
-    while (spinlock.test_and_set(std::memory_order_acquire))
-      std::this_thread::yield();
+    size_t spin = 0;
+    while (spinlock.test_and_set(std::memory_order_acquire)) {
+      for (int i = 0; i < spin; ++i)
+        _mm_pause();
+      if (spin < 1024) [[likely]]
+        spin *= 2;
+      else
+        std::this_thread::yield();
+    }
   }
   void unlock() { spinlock.clear(std::memory_order_release); }
   void set(size_t idx) {

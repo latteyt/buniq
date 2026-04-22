@@ -1,5 +1,6 @@
 
 #include <cstddef>
+#include <emmintrin.h>
 #include <fcntl.h>
 #include <memory>
 #include <random>
@@ -52,17 +53,15 @@ int main(int argc, char *argv[]) {
   for (size_t i = 0; i < nthreads; ++i) {
     workers.emplace_back([&bloom_filter, &queues, i]() {
       item_t item;
-      size_t c = 0;
+
       while (true) {
-        if (queues[i].pop(item)) {
-          if (item.len == 0)
-            break;                                // EOF signal
-          if (bloom_filter.insert_if_new(item)) { // new
-            printf("%.*s", (int)item.len, item.data);
-          }
-          c++;
+        while (!queues[i].pop(item))
+          _mm_pause();
+        if (item.len == 0)
+          break;                                // EOF signal
+        if (bloom_filter.insert_if_new(item)) { // new
+          printf("%.*s", (int)item.len, item.data);
         }
-        std::this_thread::yield();
       }
     });
   }
@@ -84,17 +83,15 @@ int main(int argc, char *argv[]) {
     item.len = len;
     memcpy(item.data, buf, len);
     // rand 分发
-    while (!queues[std::rand() % nthreads].push(item)) {
-      std::this_thread::yield();
-    }
+    while (!queues[std::rand() % nthreads].push(item))
+      _mm_pause();
   }
   // IMPORTANT: close all write ends → send EOF
   for (size_t i = 0; i < nthreads; ++i) {
     item_t eof{};
     eof.len = 0;
-    while (!queues[i].push(eof)) {
-      std::this_thread::yield();
-    }
+    while (!queues[i].push(eof))
+      _mm_pause();
   }
 
   // wait workers
