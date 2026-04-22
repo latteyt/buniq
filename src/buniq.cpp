@@ -64,7 +64,6 @@ int main(int argc, char *argv[]) {
         }
         std::this_thread::yield();
       }
-      printf("worker %zu: %zu\n", i, c);
     });
   }
 
