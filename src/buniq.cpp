@@ -15,11 +15,25 @@
 #include <thread>
 #include <vector>
 
+#include <pthread.h>
+#include <sched.h>
+
+void pin_to_cpu(int cpu_id) {
+  cpu_set_t cpuset;
+  CPU_ZERO(&cpuset);
+  CPU_SET(cpu_id, &cpuset);
+
+  int ret = pthread_setaffinity_np(pthread_self(), sizeof(cpu_set_t), &cpuset);
+  if (ret != 0) {
+    perror("pthread_setaffinity_np");
+  }
+}
+
 int main(int argc, char *argv[]) {
   static_assert(sizeof(block_t) == 64, "block_t must be 64 bytes");
   static_assert(alignof(block_t) == 64, "block_t must be 64-byte aligned");
   size_t nthreads = std::thread::hardware_concurrency() - 1;
-  if (nthreads <= 0)
+  if (nthreads <= 0 || nthreads > std::thread::hardware_concurrency())
     return 1;
   size_t scale = 8;
   size_t precision = 6;
@@ -52,6 +66,7 @@ int main(int argc, char *argv[]) {
   // create queues + workers
   for (size_t i = 0; i < nthreads; ++i) {
     workers.emplace_back([&bloom_filter, &queues, i]() {
+      pin_to_cpu(i);
       item_t item;
 
       while (true) {
