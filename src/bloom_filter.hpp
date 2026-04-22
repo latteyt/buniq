@@ -13,7 +13,7 @@
 
 const size_t bits_in_cacheline = 504;
 
-struct block_t {
+struct alignas(64) block_t {
   std::atomic_flag spinlock;
   uint8_t data[63];
 
@@ -22,14 +22,14 @@ struct block_t {
     std::memset(data, 0, 63);
   }
   void lock() {
-    size_t spin = 0;
+    size_t spin = 1;
     while (spinlock.test_and_set(std::memory_order_acquire)) {
       for (int i = 0; i < spin; ++i)
         _mm_pause();
       if (spin < 1024) [[likely]]
         spin *= 2;
       else
-        std::this_thread::yield();
+        std::this_thread::sleep_for(std::chrono::microseconds(1));
     }
   }
   void unlock() { spinlock.clear(std::memory_order_release); }
@@ -88,5 +88,6 @@ struct bloom_filter_t {
     return is_new;
   }
 };
+
 
 #endif

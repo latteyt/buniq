@@ -2,7 +2,6 @@
 #include <cstddef>
 #include <emmintrin.h>
 #include <fcntl.h>
-#include <memory>
 #include <random>
 #include <stdexcept>
 
@@ -11,13 +10,14 @@
 
 #include "atomic_queue.h"
 #include "bloom_filter.hpp"
-#include "murmur3.h"
 #include <cstdlib>
 #include <cstring>
 #include <thread>
 #include <vector>
 
 int main(int argc, char *argv[]) {
+  static_assert(sizeof(block_t) == 64, "block_t must be 64 bytes");
+  static_assert(alignof(block_t) == 64, "block_t must be 64-byte aligned");
   size_t nthreads = std::thread::hardware_concurrency() - 1;
   if (nthreads <= 0)
     return 1;
