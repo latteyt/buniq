@@ -11,15 +11,6 @@
 #include "bloom_filter.hpp"
 #include <cstdlib>
 #include <cstring>
-#include <thread>
-#include <vector>
-
-#include <pthread.h>
-#include <sched.h>
-
-#include <pthread.h>
-#include <sched.h>
-#include <stdio.h>
 
 void pin_to_current_cpu() {
   int cpu_id = sched_getcpu(); // 获取当前运行 CPU

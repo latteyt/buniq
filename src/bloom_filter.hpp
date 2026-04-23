@@ -14,7 +14,7 @@
 struct alignas(64) block_t {
   uint8_t data[64];
 
-  block_t() { std::memset(data, 0, 63); }
+  block_t() { std::memset(data, 0, 64); }
   void set(size_t idx) {
     size_t x = idx / 8;
     size_t y = idx % 8;
@@ -28,18 +28,19 @@ struct alignas(64) block_t {
 };
 
 struct bloom_filter_t {
+  static constexpr size_t bits = 64;
   std::vector<block_t> blocks;
   size_t numblock;
   size_t numhash;
   size_t seed;
 
   bloom_filter_t(size_t cardinality, size_t precision, size_t seed) {
-    double ln10 = std::log(10.0L);
-    double ln2 = std::log(2.0L);
-    double n = std::pow(10.0, cardinality);        // n = 10^cardinality
-    double m = n * precision * ln10 / (ln2 * ln2); // m bits
-    double k = precision * ln10 / ln2;             // k hashes
-    this->numblock = (size_t)std::ceil(m / sizeof(block_t));
+    static constexpr double ln10 = std::log(10.0L);
+    static constexpr double ln2 = std::log(2.0L);
+    double n = std::pow(10.0, cardinality);
+    double m = n * precision * ln10 / (ln2 * ln2);
+    double k = precision * ln10 / ln2;
+    this->numblock = (size_t)std::ceil(m / bits);
     this->numhash = (size_t)std::round(k);
     this->blocks = std::vector<block_t>(numblock);
     this->seed = seed;
@@ -55,13 +56,13 @@ struct bloom_filter_t {
     bool is_new = false;
 
     for (size_t i = 0; i < this->numhash; ++i) {
-      size_t local_idx = (hash1 + i * hash2) % sizeof(block_t);
+      size_t local_idx = (hash1 + i * hash2) % bits;
       if (!blocks[block_idx].get(local_idx))
         is_new = true;
     }
     if (is_new) {
       for (size_t i = 0; i < this->numhash; ++i) {
-        size_t local_idx = (hash1 + i * hash2) % sizeof(block_t);
+        size_t local_idx = (hash1 + i * hash2) % bits;
         blocks[block_idx].set(local_idx);
       }
     }
