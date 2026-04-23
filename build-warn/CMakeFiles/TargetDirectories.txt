@@ -1,0 +1,7 @@
+/home/yangtao/workspace/code/buniq/build-warn/CMakeFiles/buniq.dir
+/home/yangtao/workspace/code/buniq/build-warn/CMakeFiles/edit_cache.dir
+/home/yangtao/workspace/code/buniq/build-warn/CMakeFiles/rebuild_cache.dir
+/home/yangtao/workspace/code/buniq/build-warn/CMakeFiles/list_install_components.dir
+/home/yangtao/workspace/code/buniq/build-warn/CMakeFiles/install.dir
+/home/yangtao/workspace/code/buniq/build-warn/CMakeFiles/install/local.dir
+/home/yangtao/workspace/code/buniq/build-warn/CMakeFiles/install/strip.dir

@@ -8,6 +8,7 @@
 #include <emmintrin.h>
 #include <vector>
 
+static constexpr size_t bits = 64;
 struct alignas(64) block_t {
   uint8_t data[64];
 
@@ -25,15 +26,14 @@ struct alignas(64) block_t {
 };
 
 struct bloom_filter_t {
-  static constexpr size_t bits = 64;
   std::vector<block_t> blocks;
   size_t numblock;
   size_t numhash;
   size_t seed;
 
   bloom_filter_t(size_t cardinality, size_t precision, size_t seed) {
-    static constexpr double ln10 = std::log(10.0L);
-    static constexpr double ln2 = std::log(2.0L);
+    double ln10 = std::log(10.0L);
+    double ln2 = std::log(2.0L);
     double n = std::pow(10.0, cardinality);
     double m = n * precision * ln10 / (ln2 * ln2);
     double k = precision * ln10 / ln2;
@@ -44,12 +44,9 @@ struct bloom_filter_t {
   }
 
   bool insert_if_new(const char *buf, const size_t len) {
-    size_t block_idx =
-        murmur3_32((uint8_t *)buf, len, seed) % numblock;
-    size_t hash1 =
-        murmur3_32((uint8_t *)buf, len, seed + 1) % numblock;
-    size_t hash2 =
-        murmur3_32((uint8_t *)buf, len, seed + 2) % numblock;
+    size_t block_idx = murmur3_32((uint8_t *)buf, len, seed) % numblock;
+    size_t hash1 = murmur3_32((uint8_t *)buf, len, seed + 1) % numblock;
+    size_t hash2 = murmur3_32((uint8_t *)buf, len, seed + 2) % numblock;
     bool is_new = false;
 
     for (size_t i = 0; i < this->numhash; ++i) {
