@@ -1,13 +1,12 @@
-# Buniq: Blocked Bloom Filter Enpowered Uniq
+# Buniq: Blocked Bloom Filter Uniq
 
 [![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC%20BY--NC%204.0-blue.svg)](https://creativecommons.org/licenses/by-nc/4.0/)
 
-`buniq` 是一个基于 blocked Bloom Filter 的多线程去重命令行工具，采用按 cache line 分块的方式提升缓存友好性。
+`buniq` 是一个基于 blocked Bloom Filter 的去重命令行工具，采用按 cache line 分块的方式提升缓存友好性。
 它从标准输入或单个文件中读取文本行，并实时输出首次出现的行。
 
 ## 特性
 
-- 多 worker 并发处理输入行
 - 基于 blocked Bloom Filter 的快速近似去重
 - 支持从 stdin 或一个文件读取
 - 超长行会直接报错
@@ -34,14 +33,14 @@ cmake --install build
 ## 使用
 
 ```bash
-./build/buniq [-n worker_count] [-s scale] [-p precision] [input_file]
+./build/buniq [-c cardinality] [-p precision] [-s seed] [input_file]
 ```
 
 参数：
 
-- `-n` worker 数量，默认是 `hardware_concurrency() - 1`
-- `-s` Bloom Filter 规模参数，默认 `8`
+- `-c` cardinality 参数，默认 `8`
 - `-p` 精度参数，默认 `6`
+- `-s` Bloom Filter seed，默认随机生成
 
 说明：
 
@@ -50,15 +49,13 @@ cmake --install build
 
 ## 行为
 
-- 输入按行处理，单行最大长度为 `1024`
+- 输入按行处理，单行最大长度为 `128`
 - 过长输入会抛出 `Line Too Long`
 - 首次出现的行会立刻输出
-- worker 退出信号是一个 `len == 0` 的 item
 
 ## 代码结构
 
 - `src/buniq.cpp`：程序入口
-- `src/atomic_queue.h`：worker 间的 SPSC 队列
 - `src/bloom_filter.hpp`：blocked、cache-friendly 的 Bloom Filter 实现
 - `src/murmur3.h`：哈希函数
 

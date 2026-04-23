@@ -1,13 +1,12 @@
-# Buniq: Blocked Bloom Filter Enpowered Uniq
+# Buniq: Blocked Bloom Filter Uniq
 
 [![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC%20BY--NC%204.0-blue.svg)](https://creativecommons.org/licenses/by-nc/4.0/)
 
-`buniq` is a multithreaded line de-duplication CLI built around a blocked, cache-friendly Bloom filter.
+`buniq` is a line de-duplication CLI built around a blocked Bloom filter.
 It reads text lines from stdin or a single file and prints first-seen lines immediately.
 
 ## Features
 
-- Concurrent worker-based input processing
 - Fast approximate de-duplication with a blocked Bloom filter
 - Reads from stdin or one input file
 - Fails fast on lines that exceed the configured limit
@@ -34,14 +33,14 @@ cmake --install build
 ## Usage
 
 ```bash
-./build/buniq [-n worker_count] [-s scale] [-p precision] [input_file]
+./build/buniq [-c cardinality] [-p precision] [-s seed] [input_file]
 ```
 
 Options:
 
-- `-n` number of workers, default: `hardware_concurrency() - 1`
-- `-s` Bloom filter scale parameter, default: `8`
+- `-c` cardinality parameter, default: `8`
 - `-p` precision parameter, default: `6`
+- `-s` Bloom filter seed, default: random
 
 Notes:
 
@@ -50,15 +49,13 @@ Notes:
 
 ## Behavior
 
-- Input is processed line by line with a maximum line length of `1024`
+- Input is processed line by line with a maximum line length of `128`
 - Longer lines raise `Line Too Long`
 - First-seen lines are printed immediately
-- A queue item with `len == 0` is used as the worker shutdown sentinel
 
 ## Project Layout
 
 - `src/buniq.cpp`: program entrypoint
-- `src/atomic_queue.h`: SPSC queues between producer and workers
 - `src/bloom_filter.hpp`: blocked, cache-friendly Bloom filter implementation
 - `src/murmur3.h`: hash function implementation
 
