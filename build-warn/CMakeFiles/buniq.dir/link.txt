@@ -1,1 +1,0 @@
-/usr/bin/c++ -Wall -Wextra -O3 -DNDEBUG -Wl,--dependency-file=CMakeFiles/buniq.dir/link.d CMakeFiles/buniq.dir/src/buniq.cpp.o -o buniq

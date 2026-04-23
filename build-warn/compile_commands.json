@@ -1,8 +1,0 @@
-[
-{
-  "directory": "/home/yangtao/workspace/code/buniq/build-warn",
-  "command": "/usr/bin/c++  -I/home/yangtao/workspace/code/buniq/src -Wall -Wextra -O3 -DNDEBUG -o CMakeFiles/buniq.dir/src/buniq.cpp.o -c /home/yangtao/workspace/code/buniq/src/buniq.cpp",
-  "file": "/home/yangtao/workspace/code/buniq/src/buniq.cpp",
-  "output": "CMakeFiles/buniq.dir/src/buniq.cpp.o"
-}
-]
