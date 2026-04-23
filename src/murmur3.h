@@ -5,7 +5,7 @@
 #include <cstdint>
 #include <cstring>
 
-uint32_t murmur3_32(const uint8_t *key, size_t len, uint32_t seed) {
+inline uint32_t murmur3_32(const uint8_t *key, size_t len, uint32_t seed) {
   uint32_t h = seed;
   const uint32_t c1 = 0xcc9e2d51;
   const uint32_t c2 = 0x1b873593;
