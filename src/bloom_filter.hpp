@@ -1,14 +1,11 @@
 
 #ifndef BLOOM_FILTER_H
 #define BLOOM_FILTER_H
-#include "atomic_queue.h"
 #include "murmur3.h"
-#include <atomic>
 #include <cmath>
 #include <cstdint>
 #include <cstring>
 #include <emmintrin.h>
-#include <thread>
 #include <vector>
 
 struct alignas(64) block_t {
